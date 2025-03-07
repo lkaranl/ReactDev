@@ -10,6 +10,9 @@ const TutorialContent = ({ tutorial, onBack }) => {
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      // Quando estiver na última página, volta para a tela anterior
+      onBack();
     }
   };
 
@@ -91,18 +94,24 @@ const TutorialContent = ({ tutorial, onBack }) => {
         <TouchableOpacity 
           style={[
             styles.navButton,
-            { backgroundColor: theme.colors.primaryLight },
-            currentStep === totalSteps - 1 && { backgroundColor: theme.colors.buttonDisabled }
+            { 
+              backgroundColor: currentStep === totalSteps - 1 
+                ? theme.colors.primary 
+                : theme.colors.primaryLight 
+            },
+            currentStep === totalSteps - 1 && { ...theme.shadows.small }
           ]}
           onPress={handleNext}
-          disabled={currentStep === totalSteps - 1}
         >
           <Text style={[
             styles.navButtonText,
-            { color: theme.colors.primary },
-            currentStep === totalSteps - 1 && { color: theme.colors.buttonTextDisabled }
+            { 
+              color: currentStep === totalSteps - 1 
+                ? theme.colors.background 
+                : theme.colors.primary 
+            }
           ]}>
-            Próximo
+            {currentStep === totalSteps - 1 ? 'Concluir' : 'Próximo'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -190,19 +199,19 @@ const styles = StyleSheet.create({
   navigation: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 12,
     borderTopWidth: 1,
   },
   navButton: {
     flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 16,
-    marginHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginHorizontal: 6,
     alignItems: 'center',
   },
   navButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
   },
 });
