@@ -35,7 +35,7 @@ const Header = ({ onBack, onNavigate }) => {
 
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: theme.colors.text }]}>
-            React Learning
+            Aprendendo React
           </Text>
         </View>
 

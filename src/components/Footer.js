@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, Linking, Pressable } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
 const Footer = () => {
   const { theme } = useTheme();
   const currentYear = new Date().getFullYear();
 
-  const handleOpenGitHub = () => {
-    Linking.openURL('https://github.com/karanluciano');
+  const handleOpenPortfolio = () => {
+    Linking.openURL('https://lkaranl.github.io/');
   };
 
   return (
@@ -19,26 +19,28 @@ const Footer = () => {
         ...theme.shadows.small,
       }
     ]}>
-      <View style={styles.content}>
-        <View style={styles.infoContainer}>
-          <Text style={[styles.appName, { color: theme.colors.primary }]}>
+      <View style={styles.container}>
+        <View style={styles.branding}>
+          <Text style={[styles.logo, { color: theme.colors.primary }]}>
             ReactDev
           </Text>
           <Text style={[styles.copyright, { color: theme.colors.textSecondary }]}>
-            © {currentYear} Todos os direitos reservados
+            © {currentYear}
           </Text>
         </View>
-        
-        <TouchableOpacity 
-          style={styles.authorContainer}
-          onPress={handleOpenGitHub}
-          activeOpacity={0.7}
+
+        <Pressable
+          onPress={handleOpenPortfolio}
+          style={({ pressed }) => [
+            styles.devLink,
+            { backgroundColor: pressed ? theme.colors.primaryLight : 'transparent' }
+          ]}
+          hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
         >
-          <Text style={[styles.authorText, { color: theme.colors.textSecondary }]}>
-            Desenvolvido por 
-            <Text style={[styles.authorName, { color: theme.colors.text }]}> Karan Luciano</Text>
+          <Text style={[styles.devText, { color: theme.colors.textSecondary }]}>
+            desenvolvido por <Text style={{ color: theme.colors.primary }}>@karanluciano</Text>
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -46,35 +48,35 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
   footer: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderTopWidth: 1,
+    width: '100%',
+    borderTopWidth: 0.5,
+    paddingVertical: 8,
   },
-  content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  container: {
     alignItems: 'center',
+    gap: 4,
   },
-  infoContainer: {
-    flex: 1,
+  branding: {
+    alignItems: 'center',
+    gap: 1,
   },
-  appName: {
+  logo: {
     fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 2,
+    fontWeight: '600',
+    letterSpacing: -0.3,
   },
   copyright: {
-    fontSize: 11,
+    fontSize: 10,
+    opacity: 0.7,
   },
-  authorContainer: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+  devLink: {
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 4,
   },
-  authorText: {
-    fontSize: 12,
-  },
-  authorName: {
-    fontWeight: '600',
+  devText: {
+    fontSize: 10,
+    opacity: 0.7,
   },
 });
 
