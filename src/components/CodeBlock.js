@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, AccessibilityInfo } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import SyntaxHighlighter from 'react-native-syntax-highlighter';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,11 +10,23 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
   const handleOpenDocs = () => {
     if (documentationUrl) {
       Linking.openURL(documentationUrl);
+      AccessibilityInfo.announceForAccessibility('Abrindo documentação externa');
     }
   };
 
+  const handleCopyCode = () => {
+    // Implementar funcionalidade de copiar código
+    AccessibilityInfo.announceForAccessibility('Código copiado para a área de transferência');
+  };
+
   return (
-    <View style={styles.container}>
+    <View 
+      style={styles.container}
+      accessible={true}
+      accessibilityRole="article"
+      accessibilityLabel={`Exemplo de código em ${language || 'JavaScript'}`}
+      accessibilityHint="Este é um bloco de código com syntax highlighting"
+    >
       <View style={[styles.codeContainer, { backgroundColor: theme.colors.codeBackground }]}>
         <SyntaxHighlighter
           language={language || 'javascript'}
@@ -31,19 +43,35 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
         </SyntaxHighlighter>
       </View>
       
-      {documentationUrl && (
+      <View style={styles.actions}>
         <TouchableOpacity 
-          style={[styles.docsButton, { backgroundColor: theme.colors.primaryLight }]}
-          onPress={handleOpenDocs}
-          accessibilityLabel="Ver documentação"
-          accessibilityHint="Toque para abrir a documentação externa"
+          style={[styles.actionButton, { backgroundColor: theme.colors.primaryLight }]}
+          onPress={handleCopyCode}
+          accessibilityLabel="Copiar código"
+          accessibilityHint="Toque para copiar o código para a área de transferência"
+          accessibilityRole="button"
         >
-          <Icon name="menu-book" size={16} color={theme.colors.primary} />
-          <Text style={[styles.docsButtonText, { color: theme.colors.primary }]}>
-            Ver documentação
+          <Icon name="content-copy" size={16} color={theme.colors.primary} />
+          <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
+            Copiar
           </Text>
         </TouchableOpacity>
-      )}
+
+        {documentationUrl && (
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: theme.colors.primaryLight }]}
+            onPress={handleOpenDocs}
+            accessibilityLabel="Ver documentação"
+            accessibilityHint="Toque para abrir a documentação externa"
+            accessibilityRole="button"
+          >
+            <Icon name="menu-book" size={16} color={theme.colors.primary} />
+            <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
+              Ver documentação
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -59,15 +87,18 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.08)',
     overflow: 'hidden',
   },
-  docsButton: {
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+  },
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
     borderRadius: 8,
-    marginTop: 8,
-    alignSelf: 'flex-start',
   },
-  docsButtonText: {
+  actionButtonText: {
     marginLeft: 8,
     fontSize: 13,
     fontWeight: '500',

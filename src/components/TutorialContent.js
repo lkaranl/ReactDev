@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, AccessibilityInfo, Animated, Easing, Vibration } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, AccessibilityInfo, Animated, Easing, Vibration, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import CodeBlock from './CodeBlock';
 
@@ -63,13 +63,17 @@ const TutorialContent = ({ tutorial, onBack }) => {
           useNativeDriver: true,
         }),
       ]).start();
+
+      // Anunciar mudança para leitores de tela
+      AccessibilityInfo.announceForAccessibility(
+        `Passo ${currentStep + (direction === 'next' ? 2 : 0)} de ${totalSteps}: ${tutorial.steps[currentStep + (direction === 'next' ? 1 : -1)].title}`
+      );
     });
   };
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
       animateTransition('next');
-      AccessibilityInfo.announceForAccessibility(`Passo ${currentStep + 2} de ${totalSteps}`);
     } else {
       onBack();
     }
@@ -78,14 +82,21 @@ const TutorialContent = ({ tutorial, onBack }) => {
   const handlePrevious = () => {
     if (currentStep > 0) {
       animateTransition('prev');
-      AccessibilityInfo.announceForAccessibility(`Passo ${currentStep} de ${totalSteps}`);
     }
   };
 
   const step = tutorial.steps[currentStep];
+  const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+      accessible={true}
+      accessibilityRole="article"
+      accessibilityLabel={`Tutorial: ${tutorial.title}`}
+      accessibilityHint={`Você está no passo ${currentStep + 1} de ${totalSteps}`}
+    >
       <View style={[styles.progressBar, { backgroundColor: theme.colors.border }]}>
         <Animated.View 
           style={[
@@ -98,11 +109,30 @@ const TutorialContent = ({ tutorial, onBack }) => {
               })
             }
           ]} 
+          accessibilityLabel={`Progresso: ${Math.round(progressPercentage)}%`}
         />
       </View>
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        accessibilityLabel="Conteúdo do tutorial"
+        accessibilityHint="Role para ver todo o conteúdo"
+      >
         <View style={[styles.header, { backgroundColor: theme.colors.cardBackground }]}>
+          <View style={styles.headerTop}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={onBack}
+              accessibilityLabel="Voltar para a lista de tutoriais"
+              accessibilityHint="Toque para retornar à tela anterior"
+              accessibilityRole="button"
+            >
+              <Text style={[styles.backButtonText, { color: theme.colors.text }]}>
+                Voltar
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <Text 
             style={[styles.title, { color: theme.colors.text }]}
             accessibilityRole="header"
@@ -126,6 +156,9 @@ const TutorialContent = ({ tutorial, onBack }) => {
               transform: [{ translateX: slideAnim }]
             }
           ]}
+          accessible={true}
+          accessibilityRole="article"
+          accessibilityLabel={`Passo ${currentStep + 1} de ${totalSteps}: ${step.title}`}
         >
           <View style={styles.stepHeader}>
             <View 
@@ -144,7 +177,10 @@ const TutorialContent = ({ tutorial, onBack }) => {
               >
                 {step.title}
               </Text>
-              <Text style={[styles.stepProgress, { color: theme.colors.textSecondary }]}>
+              <Text 
+                style={[styles.stepProgress, { color: theme.colors.textSecondary }]}
+                accessibilityLabel={`Progresso: ${Math.round(progressPercentage)}%`}
+              >
                 Passo {currentStep + 1} de {totalSteps}
               </Text>
             </View>
@@ -158,7 +194,10 @@ const TutorialContent = ({ tutorial, onBack }) => {
           </Text>
           
           <View style={styles.codeContainer}>
-            <Text style={[styles.codeLabel, { color: theme.colors.textSecondary }]}>
+            <Text 
+              style={[styles.codeLabel, { color: theme.colors.textSecondary }]}
+              accessibilityLabel="Exemplo de código"
+            >
               Código:
             </Text>
             <CodeBlock 
@@ -188,6 +227,7 @@ const TutorialContent = ({ tutorial, onBack }) => {
           disabled={currentStep === 0}
           accessibilityLabel="Voltar para o passo anterior"
           accessibilityHint={currentStep === 0 ? "Você está no primeiro passo" : "Toque para voltar"}
+          accessibilityRole="button"
         >
           <Text style={[
             styles.navButtonText,
@@ -211,6 +251,7 @@ const TutorialContent = ({ tutorial, onBack }) => {
           onPress={handleNext}
           accessibilityLabel={currentStep === totalSteps - 1 ? "Concluir tutorial" : "Ir para o próximo passo"}
           accessibilityHint={currentStep === totalSteps - 1 ? "Toque para voltar à lista de tutoriais" : "Toque para avançar"}
+          accessibilityRole="button"
         >
           <Text style={[
             styles.navButtonText,
@@ -224,7 +265,7 @@ const TutorialContent = ({ tutorial, onBack }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -253,6 +294,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0,0,0,0.08)',
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   title: {
     fontSize: 28,
