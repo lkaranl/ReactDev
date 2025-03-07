@@ -290,6 +290,153 @@ function BotaoTema() {
           documentationUrl: 'https://react.dev/learn/passing-data-deeply-with-context'
         }
       ]
+    },
+    {
+      id: 'react-best-practices',
+      title: 'Boas Práticas em React',
+      description: 'Aprenda as melhores práticas para desenvolver aplicações React escaláveis e maintainable.',
+      steps: [
+        {
+          id: 1,
+          title: 'Estrutura de Projeto',
+          content: 'Organize seu projeto de forma escalável e mantenha uma estrutura clara de diretórios.',
+          code: `# Estrutura recomendada de projeto
+src/
+  ├── components/        # Componentes reutilizáveis
+  │   ├── common/       # Componentes genéricos (Button, Input, etc)
+  │   └── features/     # Componentes específicos de features
+  ├── hooks/            # Custom hooks
+  ├── pages/           # Componentes de página/rota
+  ├── services/        # Serviços e APIs
+  ├── context/         # Contextos do React
+  ├── utils/           # Funções utilitárias
+  ├── styles/          # Estilos globais
+  └── types/           # Definições de tipos (TypeScript)`,
+          language: 'plaintext'
+        },
+        {
+          id: 2,
+          title: 'Componentização',
+          content: 'Boas práticas para criar componentes React reutilizáveis e maintainable.',
+          code: `// ❌ Componente muito grande e com muitas responsabilidades
+function UserDashboard() {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [comments, setComments] = useState([]);
+
+  // Muita lógica aqui...
+  return (
+    <div>
+      {/* Muito JSX aqui... */}
+    </div>
+  );
+}
+
+// ✅ Componentes menores e focados
+function UserDashboard() {
+  return (
+    <div>
+      <UserProfile />
+      <UserPosts />
+      <UserComments />
+    </div>
+  );
+}
+
+// Componentes separados com responsabilidades únicas
+function UserProfile() {
+  const { user } = useUser();
+  return <ProfileCard user={user} />;
+}
+
+function UserPosts() {
+  const { posts } = usePosts();
+  return <PostList posts={posts} />;
+}`,
+          language: 'jsx'
+        },
+        {
+          id: 3,
+          title: 'Gerenciamento de Estado',
+          content: 'Melhores práticas para gerenciar estado em aplicações React.',
+          code: `// ❌ Prop drilling
+function App() {
+  const [user, setUser] = useState(null);
+  return (
+    <Header user={user}>
+      <Nav user={user}>
+        <UserMenu user={user} />
+      </Nav>
+    </Header>
+  );
+}
+
+// ✅ Usando Context API
+const UserContext = createContext();
+
+function App() {
+  const [user, setUser] = useState(null);
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      <Header>
+        <Nav>
+          <UserMenu />
+        </Nav>
+      </Header>
+    </UserContext.Provider>
+  );
+}
+
+// ✅ Custom Hook para lógica de negócio
+function useUser() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUser().then(data => {
+      setUser(data);
+      setLoading(false);
+    });
+  }, []);
+
+  return { user, loading };
+}`,
+          language: 'jsx'
+        },
+        {
+          id: 4,
+          title: 'Performance',
+          content: 'Práticas para otimizar a performance de aplicações React.',
+          code: `// ❌ Recriando funções em cada render
+function ProductList({ products }) {
+  return products.map(product => (
+    <Product
+      key={product.id}
+      {...product}
+      onDelete={() => deleteProduct(product.id)} // Nova função em cada render
+    />
+  ));
+}
+
+// ✅ Memorizando funções e componentes
+function ProductList({ products }) {
+  const handleDelete = useCallback((id) => {
+    deleteProduct(id);
+  }, []);
+
+  return products.map(product => (
+    <MemoizedProduct
+      key={product.id}
+      {...product}
+      onDelete={handleDelete}
+    />
+  ));
+}
+
+const MemoizedProduct = memo(Product);`,
+          language: 'jsx'
+        }
+      ]
     }
   ],
   reactNative: [
@@ -564,6 +711,171 @@ function App() {
 }`,
           language: 'jsx',
           documentationUrl: 'https://reactnavigation.org/docs/getting-started'
+        }
+      ]
+    },
+    {
+      id: 'react-native-best-practices',
+      title: 'Boas Práticas em React Native',
+      description: 'Aprenda as melhores práticas para desenvolver aplicativos móveis com React Native.',
+      steps: [
+        {
+          id: 1,
+          title: 'Estrutura e Organização',
+          content: 'Organize seu projeto React Native de forma eficiente.',
+          code: `# Estrutura recomendada para projetos React Native
+src/
+  ├── components/       # Componentes reutilizáveis
+  │   ├── common/      # Componentes base (Button, Input, etc)
+  │   └── screens/     # Componentes específicos de tela
+  ├── navigation/      # Configuração de navegação
+  ├── services/        # APIs e serviços
+  ├── hooks/           # Custom hooks
+  ├── assets/          # Imagens, fontes, etc
+  ├── theme/           # Estilos globais e tema
+  └── utils/           # Funções utilitárias`,
+          language: 'plaintext'
+        },
+        {
+          id: 2,
+          title: 'Performance e Otimização',
+          content: 'Práticas para melhorar a performance do app.',
+          code: `// ❌ Má prática: Estilização inline
+function Card() {
+  return (
+    <View style={{ padding: 20, margin: 10, backgroundColor: '#fff' }}>
+      <Text style={{ fontSize: 16, color: '#000' }}>Conteúdo</Text>
+    </View>
+  );
+}
+
+// ✅ Boa prática: StyleSheet para melhor performance
+const styles = StyleSheet.create({
+  card: {
+    padding: 20,
+    margin: 10,
+    backgroundColor: '#fff',
+  },
+  text: {
+    fontSize: 16,
+    color: '#000',
+  },
+});
+
+function Card() {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.text}>Conteúdo</Text>
+    </View>
+  );
+}
+
+// ✅ Boa prática: Componentes puros para listas
+const MemoizedItem = memo(({ item, onPress }) => (
+  <TouchableOpacity onPress={onPress}>
+    <Text>{item.title}</Text>
+  </TouchableOpacity>
+));
+
+function List({ data }) {
+  const renderItem = useCallback(({ item }) => (
+    <MemoizedItem 
+      item={item}
+      onPress={() => handlePress(item.id)}
+    />
+  ), []);
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={item => item.id}
+    />
+  );
+}`,
+          language: 'jsx'
+        },
+        {
+          id: 3,
+          title: 'Responsividade',
+          content: 'Práticas para criar layouts responsivos.',
+          code: `import { Dimensions } from 'react-native';
+
+// ❌ Valores fixos
+const styles = StyleSheet.create({
+  container: {
+    width: 300,
+    height: 500,
+  },
+});
+
+// ✅ Dimensões relativas
+const { width, height } = Dimensions.get('window');
+
+const styles = StyleSheet.create({
+  container: {
+    width: width * 0.9,
+    height: height * 0.6,
+  },
+  // Usando flexbox para layouts adaptáveis
+  content: {
+    flex: 1,
+    paddingHorizontal: width * 0.05,
+  },
+});
+
+// ✅ Hook para dimensões responsivas
+function useResponsiveDimensions() {
+  const [dimensions, setDimensions] = useState(
+    Dimensions.get('window')
+  );
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change',
+      ({ window }) => {
+        setDimensions(window);
+      }
+    );
+
+    return () => subscription?.remove();
+  }, []);
+
+  return dimensions;
+}`,
+          language: 'jsx'
+        },
+        {
+          id: 4,
+          title: 'Segurança',
+          content: 'Boas práticas de segurança para apps React Native.',
+          code: `// ❌ Má prática: Armazenamento inseguro
+async function saveUserData(userData) {
+  await AsyncStorage.setItem('userData', JSON.stringify(userData));
+}
+
+// ✅ Boa prática: Armazenamento seguro
+import * as SecureStore from 'expo-secure-store';
+
+async function saveUserData(userData) {
+  await SecureStore.setItemAsync(
+    'userData',
+    JSON.stringify(userData)
+  );
+}
+
+// ✅ Boa prática: Validação de dados
+function validateUserInput(input) {
+  if (!input.match(/^[a-zA-Z0-9]+$/)) {
+    throw new Error('Input contém caracteres inválidos');
+  }
+}
+
+// ✅ Boa prática: Sanitização de dados
+function sanitizeHtml(html) {
+  return html.replace(/<[^>]*>?/gm, '');
+}`,
+          language: 'jsx'
         }
       ]
     }
