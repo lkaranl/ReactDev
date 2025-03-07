@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { useTheme } from '../context/ThemeContext';
 import HomeHeader from './HomeHeader';
 
-const Home = ({ onSelectCategory }) => {
+const Home = ({ onSelectCategory, onSelectExercises }) => {
   const { theme } = useTheme();
 
   const categories = [
@@ -58,6 +58,44 @@ const Home = ({ onSelectCategory }) => {
                 </View>
                 <View style={[styles.arrowContainer, { backgroundColor: theme.colors.primaryLight }]}>
                   <Text style={[styles.arrow, { color: theme.colors.primary }]}>→</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            Exercícios Práticos
+          </Text>
+          <Text style={[styles.sectionDescription, { color: theme.colors.textSecondary }]}>
+            Pratique seus conhecimentos com exercícios interativos
+          </Text>
+
+          <View style={styles.exercisesContainer}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={`exercise-${category.id}`}
+                style={[
+                  styles.exerciseCard,
+                  { 
+                    backgroundColor: theme.colors.cardBackground,
+                    ...theme.shadows.medium,
+                  }
+                ]}
+                onPress={() => onSelectExercises(category.id)}
+              >
+                <View style={[styles.exerciseIconContainer, { backgroundColor: `${category.color}20` }]}>
+                  <Text style={styles.exerciseIcon}>{category.icon}</Text>
+                </View>
+                <View style={styles.exerciseContent}>
+                  <Text style={[styles.exerciseTitle, { color: theme.colors.text }]}>
+                    Exercícios de {category.title}
+                  </Text>
+                  <Text style={[styles.exerciseDescription, { color: theme.colors.textSecondary }]}>
+                    Pratique com exemplos reais
+                  </Text>
+                </View>
+                <View style={[styles.exerciseArrowContainer, { backgroundColor: theme.colors.primaryLight }]}>
+                  <Text style={[styles.exerciseArrow, { color: theme.colors.primary }]}>→</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -127,6 +165,63 @@ const styles = StyleSheet.create({
   },
   arrow: {
     fontSize: 20,
+    fontWeight: 'bold',
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 8,
+    paddingHorizontal: 20,
+  },
+  sectionDescription: {
+    fontSize: 16,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  exercisesContainer: {
+    padding: 20,
+    gap: 16,
+    paddingBottom: 40,
+  },
+  exerciseCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+  },
+  exerciseIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  exerciseIcon: {
+    fontSize: 24,
+  },
+  exerciseContent: {
+    flex: 1,
+  },
+  exerciseTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  exerciseDescription: {
+    fontSize: 14,
+  },
+  exerciseArrowContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  exerciseArrow: {
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
