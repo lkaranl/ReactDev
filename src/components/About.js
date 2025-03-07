@@ -1,13 +1,76 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Image, Animated, Pressable } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+
+const SocialButton = ({ icon, label, url, theme }) => {
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+
+  const handlePress = () => {
+    Linking.openURL(url);
+  };
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      friction: 8,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 5,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <Pressable
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Animated.View
+        style={[
+          styles.socialButton,
+          {
+            backgroundColor: theme.colors.primaryLight,
+            transform: [{ scale: scaleAnim }]
+          }
+        ]}
+      >
+        <Text style={styles.socialIcon}>{icon}</Text>
+        <Text style={[styles.socialLabel, { color: theme.colors.primary }]}>
+          {label}
+        </Text>
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const About = () => {
   const { theme } = useTheme();
 
-  const handleOpenGitHub = () => {
-    Linking.openURL('https://github.com/karanluciano/ReactDev');
-  };
+  const socialLinks = [
+    {
+      icon: '🔗',
+      label: 'LinkedIn',
+      url: 'https://www.linkedin.com/in/karan-luciano-2b7598159/'
+    },
+    {
+      icon: '🌐',
+      label: 'Portfolio',
+      url: 'https://lkaranl.github.io/'
+    },
+    {
+      icon: '📸',
+      label: 'Instagram',
+      url: 'https://www.instagram.com/'
+    }
+  ];
 
   return (
     <ScrollView 
@@ -20,63 +83,73 @@ const About = () => {
         borderColor: theme.colors.border,
         ...theme.shadows.medium,
       }]}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
-          Sobre o ReactDev
-        </Text>
-        
-        <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
-          O ReactDev é uma plataforma de aprendizado dedicada ao desenvolvimento com React e React Native. 
-          Nossa missão é fornecer conteúdo educacional de qualidade e recursos práticos para ajudar 
-          desenvolvedores a dominarem essas tecnologias.
-        </Text>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Recursos
-          </Text>
-          <View style={styles.featureList}>
-            {[
-              'Tutoriais interativos',
-              'Exercícios práticos',
-              'Exemplos de código',
-              'Dicas e melhores práticas',
-              'Suporte a temas claro e escuro'
-            ].map((feature, index) => (
-              <View 
-                key={index} 
-                style={[styles.featureItem, { borderColor: theme.colors.border }]}
-              >
-                <Text style={[styles.featureText, { color: theme.colors.text }]}>
-                  • {feature}
-                </Text>
-              </View>
-            ))}
+        <View style={styles.appSection}>
+          <View style={[styles.logoContainer, { backgroundColor: theme.colors.primaryLight }]}>
+            <Text style={[styles.logoText, { color: theme.colors.primary }]}>⚛️</Text>
           </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-            Tecnologias
+          <Text style={[styles.appName, { color: theme.colors.text }]}>
+            ReactDev
           </Text>
-          <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
-            Desenvolvido com React Native e Expo, utilizando as melhores práticas 
-            de desenvolvimento mobile e padrões modernos de UI/UX.
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={[styles.githubButton, { backgroundColor: theme.colors.primary }]}
-          onPress={handleOpenGitHub}
-        >
-          <Text style={styles.githubButtonText}>
-            Ver no GitHub
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.section}>
-          <Text style={[styles.version, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.appVersion, { color: theme.colors.textSecondary }]}>
             Versão 1.0.0
           </Text>
+        </View>
+
+        <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
+          O ReactDev é uma plataforma educacional dedicada ao aprendizado de React e React Native.
+          Nossa missão é fornecer recursos de alta qualidade para desenvolvedores dominarem essas tecnologias.
+        </Text>
+
+        <View style={styles.featuresContainer}>
+          {[
+            'Tutoriais Interativos',
+            'Exercícios Práticos',
+            'Interface Moderna',
+            'Temas Claro e Escuro',
+            'Código Aberto'
+          ].map((feature, index) => (
+            <View 
+              key={index}
+              style={[styles.featureItem, { backgroundColor: theme.colors.primaryLight }]}
+            >
+              <Text style={[styles.featureText, { color: theme.colors.primary }]}>
+                {feature}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+        <View style={styles.developerSection}>
+          <Text style={[styles.developerTitle, { color: theme.colors.textSecondary }]}>
+            Desenvolvido por
+          </Text>
+          <View style={styles.developerInfo}>
+            <View style={[styles.avatarContainer, { backgroundColor: theme.colors.primaryLight }]}>
+              <Text style={[styles.avatarText, { color: theme.colors.primary }]}>KL</Text>
+            </View>
+            <View style={styles.developerTextContainer}>
+              <Text style={[styles.developerName, { color: theme.colors.text }]}>
+                Karan Luciano
+              </Text>
+              <Text style={[styles.developerRole, { color: theme.colors.textSecondary }]}>
+                Desenvolvedor Full Stack
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.socialContainer}>
+            {socialLinks.map((link, index) => (
+              <SocialButton
+                key={index}
+                icon={link.icon}
+                label={link.label}
+                url={link.url}
+                theme={theme}
+              />
+            ))}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -91,54 +164,112 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     borderWidth: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  appSection: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logoContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 16,
-    textAlign: 'center',
+  },
+  logoText: {
+    fontSize: 48,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  appVersion: {
+    fontSize: 14,
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 24,
+    textAlign: 'center',
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  featureList: {
+  featuresContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
+    marginBottom: 24,
+    justifyContent: 'center',
   },
   featureItem: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
   },
   featureText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '500',
   },
-  githubButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 25,
-    alignItems: 'center',
+  divider: {
+    height: 1,
     marginBottom: 24,
   },
-  githubButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
+  developerSection: {
+    alignItems: 'center',
   },
-  version: {
-    textAlign: 'center',
+  developerTitle: {
     fontSize: 14,
+    marginBottom: 16,
+  },
+  developerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  avatarContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  avatarText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  developerTextContainer: {
+    flex: 1,
+  },
+  developerName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  developerRole: {
+    fontSize: 14,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  socialButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    gap: 6,
+  },
+  socialIcon: {
+    fontSize: 16,
+  },
+  socialLabel: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
 

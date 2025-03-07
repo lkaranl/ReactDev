@@ -111,9 +111,16 @@ const Menu = ({ isVisible, onClose, onSelectOption }) => {
                       style={styles.menuButtonContainer}
                       onPress={item.onPress}
                     >
-                      <Text style={[styles.menuText, { color: theme.colors.text }]}>
-                        {item.title}
-                      </Text>
+                      <View style={styles.menuTextContainer}>
+                        <Text style={[styles.menuText, { color: theme.colors.text }]}>
+                          {item.title}
+                        </Text>
+                        {item.subtitle && (
+                          <Text style={[styles.menuSubtext, { color: theme.colors.textSecondary }]}>
+                            {item.subtitle}
+                          </Text>
+                        )}
+                      </View>
                       <View style={styles.menuButton}>
                         <Text style={[styles.menuButtonText, { color: theme.colors.primary }]}>
                           →
@@ -153,10 +160,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
   },
+  menuTextContainer: {
+    flex: 1,
+  },
   menuText: {
     fontSize: 16,
     fontWeight: '500',
-    flex: 1,
+  },
+  menuSubtext: {
+    fontSize: 13,
+    marginTop: 2,
   },
   menuButton: {
     padding: 4,
