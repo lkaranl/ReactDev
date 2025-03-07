@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, AccessibilityInfo, Animated, Easing, Vibration } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import CodeBlock from './CodeBlock';
 
 const TutorialContent = ({ tutorial, onBack }) => {
   const { theme } = useTheme();
@@ -157,27 +158,14 @@ const TutorialContent = ({ tutorial, onBack }) => {
           </Text>
           
           <View style={styles.codeContainer}>
-            <Text 
-              style={[styles.codeLabel, { color: theme.colors.textSecondary }]}
-              accessibilityLabel="Exemplo de código"
-            >
+            <Text style={[styles.codeLabel, { color: theme.colors.textSecondary }]}>
               Código:
             </Text>
-            <View style={[
-              styles.codeBox,
-              { 
-                backgroundColor: theme.colors.codeBackground,
-                borderColor: theme.colors.codeBorder,
-                ...theme.shadows.small,
-              }
-            ]}>
-              <Text 
-                style={[styles.code, { color: theme.colors.text }]}
-                accessibilityLabel={`Código: ${step.code}`}
-              >
-                {step.code}
-              </Text>
-            </View>
+            <CodeBlock 
+              code={step.code}
+              language={step.language || 'javascript'}
+              documentationUrl={step.documentationUrl}
+            />
           </View>
         </Animated.View>
       </ScrollView>
@@ -326,17 +314,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: '500',
     opacity: 0.7,
-  },
-  codeBox: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    backgroundColor: 'rgba(0,0,0,0.02)',
-  },
-  code: {
-    fontFamily: 'monospace',
-    fontSize: 13,
-    lineHeight: 20,
   },
   navigation: {
     flexDirection: 'row',
