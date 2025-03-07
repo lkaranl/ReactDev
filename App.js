@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, SafeAreaView, BackHandler } from 'react-native';
 import { StatusBar } from 'react-native';
 import TutorialList from './src/components/TutorialList';
 import TutorialContent from './src/components/TutorialContent';
@@ -26,12 +26,16 @@ function AppContent() {
   const handleBack = () => {
     if (selectedExercise) {
       setSelectedExercise(null);
+      return true;
     } else if (selectedTutorial) {
       setSelectedTutorial(null);
-    } else {
+      return true;
+    } else if (selectedCategory) {
       setSelectedCategory(null);
       setViewMode('home');
+      return true;
     }
+    return false;
   };
 
   const handleSelectCategory = (category) => {
@@ -47,6 +51,19 @@ function AppContent() {
   const handleSelectExercise = (exercise) => {
     setSelectedExercise(exercise);
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      return handleBack();
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [selectedExercise, selectedTutorial, selectedCategory, viewMode]);
 
   const renderContent = () => {
     if (viewMode === 'home') {
