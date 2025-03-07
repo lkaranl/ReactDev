@@ -40,16 +40,6 @@ const Footer = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      
-      <View 
-        style={[
-          styles.gradientLine, 
-          { 
-            backgroundColor: theme.colors.primary,
-            shadowColor: theme.colors.primary,
-          }
-        ]} 
-      />
     </View>
   );
 };
@@ -85,17 +75,6 @@ const styles = StyleSheet.create({
   },
   authorName: {
     fontWeight: '600',
-  },
-  gradientLine: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 3,
   },
 });
 
