@@ -93,7 +93,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
       accessible={true}
-      accessibilityRole="article"
       accessibilityLabel={`Tutorial: ${tutorial.title}`}
       accessibilityHint={`Você está no passo ${currentStep + 1} de ${totalSteps}`}
     >
@@ -125,7 +124,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
               onPress={onBack}
               accessibilityLabel="Voltar para a lista de tutoriais"
               accessibilityHint="Toque para retornar à tela anterior"
-              accessibilityRole="button"
             >
               <Text style={[styles.backButtonText, { color: theme.colors.text }]}>
                 Voltar
@@ -135,7 +133,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
 
           <Text 
             style={[styles.title, { color: theme.colors.text }]}
-            accessibilityRole="header"
             accessibilityLabel={`Tutorial: ${tutorial.title}`}
           >
             {tutorial.title}
@@ -157,7 +154,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
             }
           ]}
           accessible={true}
-          accessibilityRole="article"
           accessibilityLabel={`Passo ${currentStep + 1} de ${totalSteps}: ${step.title}`}
         >
           <View style={styles.stepHeader}>
@@ -172,7 +168,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
             <View style={styles.stepTitleContainer}>
               <Text 
                 style={[styles.stepTitle, { color: theme.colors.text }]}
-                accessibilityRole="header"
                 accessibilityLabel={step.title}
               >
                 {step.title}
@@ -227,7 +222,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
           disabled={currentStep === 0}
           accessibilityLabel="Voltar para o passo anterior"
           accessibilityHint={currentStep === 0 ? "Você está no primeiro passo" : "Toque para voltar"}
-          accessibilityRole="button"
         >
           <Text style={[
             styles.navButtonText,
@@ -251,7 +245,6 @@ const TutorialContent = ({ tutorial, onBack }) => {
           onPress={handleNext}
           accessibilityLabel={currentStep === totalSteps - 1 ? "Concluir tutorial" : "Ir para o próximo passo"}
           accessibilityHint={currentStep === totalSteps - 1 ? "Toque para voltar à lista de tutoriais" : "Toque para avançar"}
-          accessibilityRole="button"
         >
           <Text style={[
             styles.navButtonText,

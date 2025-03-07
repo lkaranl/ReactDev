@@ -23,7 +23,6 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
     <View 
       style={styles.container}
       accessible={true}
-      accessibilityRole="article"
       accessibilityLabel={`Exemplo de código em ${language || 'JavaScript'}`}
       accessibilityHint="Este é um bloco de código com syntax highlighting"
     >
@@ -49,7 +48,6 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
           onPress={handleCopyCode}
           accessibilityLabel="Copiar código"
           accessibilityHint="Toque para copiar o código para a área de transferência"
-          accessibilityRole="button"
         >
           <Icon name="content-copy" size={16} color={theme.colors.primary} />
           <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
@@ -63,7 +61,6 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
             onPress={handleOpenDocs}
             accessibilityLabel="Ver documentação"
             accessibilityHint="Toque para abrir a documentação externa"
-            accessibilityRole="button"
           >
             <Icon name="menu-book" size={16} color={theme.colors.primary} />
             <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
