@@ -222,6 +222,87 @@ function Example() {
           ]
         }
       ]
+    },
+    {
+      id: 'react-native-start',
+      title: 'Iniciando um Projeto do Zero com Expo',
+      description: 'Aprenda a criar um projeto React Native do zero usando o Expo.',
+      steps: [
+        {
+          id: 1,
+          title: 'Instalação do Expo CLI',
+          content: 'Primeiro, instale o Expo CLI globalmente em sua máquina.',
+          code: 'npm install -g expo-cli',
+          language: 'bash'
+        },
+        {
+          id: 2,
+          title: 'Criando um Novo Projeto',
+          content: 'Use o comando `npx create-expo-app` para criar um novo projeto.',
+          code: 'npx create-expo-app --template blank meu-app',
+          language: 'bash'
+        },
+        {
+          id: 3,
+          title: 'Navegando até o Diretório do Projeto',
+          content: 'Navegue até o diretório do projeto que você acabou de criar.',
+          code: 'cd meu-app',
+          language: 'bash'
+        },
+        {
+          id: 4,
+          title: 'Iniciando o Servidor de Desenvolvimento',
+          content: 'Inicie o servidor de desenvolvimento para visualizar o aplicativo.',
+          code: 'npx expo start',
+          language: 'bash'
+        },
+        {
+          id: 5,
+          title: 'Executando no Emulador ou Dispositivo Físico',
+          content: 'Escaneie o QR code com o aplicativo Expo Go ou execute no emulador.',
+          code: 'Pressione "a" para Android ou "i" para iOS no terminal.',
+          language: 'bash'
+        }
+      ]
+    },
+    {
+      id: 'react-native-errors',
+      title: 'Erros Comuns e Como Resolver',
+      description: 'Aprenda a identificar e resolver os erros mais comuns no desenvolvimento com React Native.',
+      steps: [
+        {
+          id: 1,
+          title: 'Erro: "Unable to resolve module"',
+          content: 'Esse erro ocorre quando o React Native não consegue encontrar um módulo. Verifique se o módulo está instalado corretamente.',
+          solution: 'Execute `npm install` ou `yarn install` para instalar as dependências.',
+          code: 'npm install nome-do-modulo',
+          language: 'bash'
+        },
+        {
+          id: 2,
+          title: 'Erro: "Metro Bundler has encountered an error"',
+          content: 'Esse erro geralmente ocorre devido a problemas no código ou na configuração do Metro Bundler.',
+          solution: 'Tente reiniciar o servidor com `npx expo start --clear`.',
+          code: 'npx expo start --clear',
+          language: 'bash'
+        },
+        {
+          id: 3,
+          title: 'Erro: "No bundle URL present"',
+          content: 'Esse erro pode ocorrer quando o servidor de desenvolvimento não está rodando corretamente.',
+          solution: 'Verifique se o servidor está rodando e tente reiniciá-lo.',
+          code: 'npx expo start',
+          language: 'bash'
+        },
+        {
+          id: 4,
+          title: 'Erro: "Unable to load script"',
+          content: 'Esse erro pode ocorrer devido a problemas de rede ou configuração do Metro Bundler.',
+          solution: 'Verifique sua conexão de internet e tente reiniciar o servidor.',
+          code: 'npx expo start --clear',
+          language: 'bash'
+        }
+      ]
     }
   ]
 };
