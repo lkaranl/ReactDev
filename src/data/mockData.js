@@ -1,6 +1,77 @@
 export const tutorials = {
   react: [
     {
+      id: 'create-react-app',
+      title: 'Criando um Projeto React',
+      description: 'Aprenda como criar um novo projeto React do zero usando Create React App ou Vite.',
+      steps: [
+        {
+          id: 1,
+          title: 'Usando Create React App',
+          content: 'Create React App é uma forma oficial de criar aplicações React com uma boa configuração padrão.',
+          code: `# Usando npx (recomendado)
+npx create-react-app meu-projeto
+cd meu-projeto
+npm start
+
+# Estrutura do projeto criado
+meu-projeto/
+  ├── node_modules/
+  ├── public/
+  │   ├── index.html
+  │   └── manifest.json
+  ├── src/
+  │   ├── App.js
+  │   ├── index.js
+  │   └── styles.css
+  ├── package.json
+  └── README.md`,
+          language: 'bash',
+          documentationUrl: 'https://create-react-app.dev/docs/getting-started'
+        },
+        {
+          id: 2,
+          title: 'Usando Vite',
+          content: 'Vite é uma ferramenta de build mais moderna e rápida, muito popular para criar projetos React.',
+          code: `# Criando projeto com Vite
+npm create vite@latest meu-projeto -- --template react
+cd meu-projeto
+npm install
+npm run dev
+
+# Estrutura do projeto Vite
+meu-projeto/
+  ├── node_modules/
+  ├── public/
+  ├── src/
+  │   ├── App.jsx
+  │   └── main.jsx
+  ├── index.html
+  ├── package.json
+  └── vite.config.js`,
+          language: 'bash',
+          documentationUrl: 'https://vitejs.dev/guide/'
+        },
+        {
+          id: 3,
+          title: 'Instalando Dependências Comuns',
+          content: 'Algumas bibliotecas populares que você pode querer adicionar ao seu projeto.',
+          code: `# Roteamento
+npm install react-router-dom
+
+# Gerenciamento de Estado
+npm install @reduxjs/toolkit react-redux
+
+# Estilização
+npm install styled-components
+
+# Requisições HTTP
+npm install axios`,
+          language: 'bash'
+        }
+      ]
+    },
+    {
       id: 'react-basics',
       title: 'Iniciando com React',
       description: 'Aprenda os conceitos básicos do React e comece a criar suas primeiras aplicações.',
@@ -136,9 +207,167 @@ function Example() {
           code: 'import { useNavigate } from \'react-router-dom\';\n\nfunction BotaoNavegacao() {\n  const navigate = useNavigate();\n  \n  return (\n    <button onClick={() => navigate(\'/sobre\')}>\n      Ir para Sobre\n    </button>\n  );\n}'
         }
       ]
+    },
+    {
+      id: 'react-performance',
+      title: 'Otimização de Performance',
+      description: 'Aprenda técnicas avançadas para otimizar a performance de suas aplicações React.',
+      steps: [
+        {
+          id: 1,
+          title: 'React.memo e useMemo',
+          content: 'Aprenda a evitar renderizações desnecessárias usando React.memo e useMemo.',
+          code: `// Exemplo de uso do React.memo
+const MeuComponente = React.memo(({ dados }) => {
+  return <div>{dados.map(item => <Item key={item.id} {...item} />)}</div>;
+});
+
+// Exemplo de useMemo
+function ListaItems({ items }) {
+  const itemsFiltrados = useMemo(() => {
+    return items.filter(item => item.ativo);
+  }, [items]);
+
+  return <div>{itemsFiltrados.map(item => <Item key={item.id} {...item} />)}</div>;
+}`,
+          language: 'jsx',
+          documentationUrl: 'https://react.dev/reference/react/memo'
+        },
+        {
+          id: 2,
+          title: 'useCallback',
+          content: 'Otimize a performance memorizando funções com useCallback.',
+          code: `function ListaItems({ onItemClick }) {
+  const handleClick = useCallback((id) => {
+    onItemClick(id);
+  }, [onItemClick]);
+
+  return items.map(item => (
+    <Item 
+      key={item.id} 
+      onClick={() => handleClick(item.id)}
+    />
+  ));
+}`,
+          language: 'jsx',
+          documentationUrl: 'https://react.dev/reference/react/useCallback'
+        }
+      ]
+    },
+    {
+      id: 'react-context',
+      title: 'Gerenciamento de Estado Global',
+      description: 'Aprenda a gerenciar estado global em React usando Context API e outros padrões.',
+      steps: [
+        {
+          id: 1,
+          title: 'Context API',
+          content: 'Use o Context API para compartilhar dados entre componentes sem prop drilling.',
+          code: `// Criando um contexto
+const TemaContext = React.createContext();
+
+// Provider no componente pai
+function App() {
+  const [tema, setTema] = useState('claro');
+  
+  return (
+    <TemaContext.Provider value={{ tema, setTema }}>
+      <Componentes />
+    </TemaContext.Provider>
+  );
+}
+
+// Usando o contexto em qualquer componente filho
+function BotaoTema() {
+  const { tema, setTema } = useContext(TemaContext);
+  return (
+    <button onClick={() => setTema(tema === 'claro' ? 'escuro' : 'claro')}>
+      Mudar Tema
+    </button>
+  );
+}`,
+          language: 'jsx',
+          documentationUrl: 'https://react.dev/learn/passing-data-deeply-with-context'
+        }
+      ]
     }
   ],
   reactNative: [
+    {
+      id: 'create-react-native-app',
+      title: 'Criando um Projeto React Native',
+      description: 'Aprenda como criar um novo projeto React Native usando Expo ou React Native CLI.',
+      steps: [
+        {
+          id: 1,
+          title: 'Usando Expo (Recomendado para Iniciantes)',
+          content: 'Expo é uma plataforma que facilita o desenvolvimento React Native, especialmente para iniciantes.',
+          code: `# Instalando Expo CLI
+npm install -g expo-cli
+
+# Criando novo projeto
+npx create-expo-app meu-app
+cd meu-app
+npx expo start
+
+# Estrutura do projeto
+meu-app/
+  ├── assets/
+  ├── node_modules/
+  ├── App.js
+  ├── app.json
+  ├── babel.config.js
+  └── package.json`,
+          language: 'bash',
+          documentationUrl: 'https://docs.expo.dev/get-started/create-a-new-app/'
+        },
+        {
+          id: 2,
+          title: 'Usando React Native CLI',
+          content: 'React Native CLI é a forma tradicional de criar projetos, oferecendo mais controle sobre a configuração nativa.',
+          code: `# Criando novo projeto
+npx react-native@latest init MeuApp
+cd MeuApp
+
+# Para iOS (requer macOS)
+cd ios && pod install && cd ..
+npx react-native run-ios
+
+# Para Android
+npx react-native run-android
+
+# Estrutura do projeto
+MeuApp/
+  ├── android/
+  ├── ios/
+  ├── node_modules/
+  ├── src/
+  ├── App.js
+  ├── index.js
+  └── package.json`,
+          language: 'bash',
+          documentationUrl: 'https://reactnative.dev/docs/environment-setup'
+        },
+        {
+          id: 3,
+          title: 'Instalando Dependências Comuns',
+          content: 'Bibliotecas populares para desenvolvimento React Native.',
+          code: `# Navegação
+npm install @react-navigation/native @react-navigation/native-stack
+npx expo install react-native-screens react-native-safe-area-context
+
+# Armazenamento Local
+npx expo install @react-native-async-storage/async-storage
+
+# Ícones
+npx expo install @expo/vector-icons
+
+# Gestos e Animações
+npx expo install react-native-reanimated`,
+          language: 'bash'
+        }
+      ]
+    },
     {
       id: 'react-native-basics',
       title: 'Iniciando com React Native',
@@ -303,6 +532,130 @@ function Example() {
           language: 'bash'
         }
       ]
+    },
+    {
+      id: 'react-native-navigation',
+      title: 'Navegação com React Navigation',
+      description: 'Aprenda a implementar navegação em apps React Native usando React Navigation.',
+      steps: [
+        {
+          id: 1,
+          title: 'Instalação e Configuração',
+          content: 'Configure o React Navigation em seu projeto.',
+          code: `// Instalação
+npm install @react-navigation/native
+npm install @react-navigation/native-stack
+
+// App.js
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}`,
+          language: 'jsx',
+          documentationUrl: 'https://reactnavigation.org/docs/getting-started'
+        }
+      ]
     }
-  ]
+  ],
+  errors: {
+    react: [
+      {
+        id: 'hooks-errors',
+        title: 'Erros Comuns com Hooks',
+        examples: [
+          {
+            error: 'React Hook "useState" is called in function "exemplo" that is neither a React function component nor a custom React Hook function',
+            cause: 'Hooks só podem ser usados dentro de componentes React ou custom hooks.',
+            solution: 'Mova o hook para dentro de um componente React ou crie um custom hook.',
+            example: `// ❌ Errado
+function exemplo() {
+  const [state, setState] = useState(0);
+}
+
+// ✅ Correto
+function ExemploComponent() {
+  const [state, setState] = useState(0);
+}`
+          },
+          {
+            error: 'React Hook useEffect has a missing dependency: "callback"',
+            cause: 'Dependência faltando no array de dependências do useEffect.',
+            solution: 'Adicione todas as dependências necessárias ou use useCallback.',
+            example: `// ❌ Errado
+useEffect(() => {
+  callback();
+}, []); // ESLint: 'callback' is missing in dependencies
+
+// ✅ Correto
+useEffect(() => {
+  callback();
+}, [callback]);`
+          }
+        ]
+      }
+    ],
+    reactNative: [
+      {
+        id: 'build-errors',
+        title: 'Erros de Build',
+        examples: [
+          {
+            error: 'Error: Unable to resolve module `@react-navigation/native` from `App.js`',
+            cause: 'Pacote não instalado ou cache do Metro corrompido.',
+            solution: 'Limpe o cache e reinstale as dependências.',
+            example: `// Execute estes comandos
+rm -rf node_modules
+npm install
+npx react-native start --reset-cache`
+          },
+          {
+            error: 'Error: Invariant Violation: Native module cannot be null.',
+            cause: 'Módulo nativo não está linkado corretamente.',
+            solution: 'Reinstale os pods (iOS) ou reconstrua o projeto (Android).',
+            example: `// Para iOS
+cd ios && pod install && cd ..
+// Para Android
+cd android && ./gradlew clean && cd ..`
+          }
+        ]
+      },
+      {
+        id: 'runtime-errors',
+        title: 'Erros em Tempo de Execução',
+        examples: [
+          {
+            error: 'undefined is not an object (evaluating \'_this.state.data\')',
+            cause: 'Tentativa de acessar propriedade de estado não inicializada.',
+            solution: 'Inicialize o estado corretamente e use optional chaining.',
+            example: `// ❌ Errado
+class MeuComponente extends React.Component {
+  render() {
+    return <Text>{this.state.data.title}</Text>;
+  }
+}
+
+// ✅ Correto
+class MeuComponente extends React.Component {
+  state = { data: null }
+  
+  render() {
+    return <Text>{this.state.data?.title}</Text>;
+  }
+}`
+          }
+        ]
+      }
+    ]
+  }
 };
