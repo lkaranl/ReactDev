@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
 const Footer = () => {
   const { theme } = useTheme();
+  const currentYear = new Date().getFullYear();
+
+  const handleOpenGitHub = () => {
+    Linking.openURL('https://github.com/karanluciano');
+  };
 
   return (
     <View style={[
@@ -11,25 +16,86 @@ const Footer = () => {
       {
         backgroundColor: theme.colors.cardBackground,
         borderTopColor: theme.colors.border,
+        ...theme.shadows.small,
       }
     ]}>
-      <Text style={[styles.text, { color: theme.colors.textSecondary }]}>
-        ReactDev • Desenvolvido por Karan Luciano
-      </Text>
+      <View style={styles.content}>
+        <View style={styles.infoContainer}>
+          <Text style={[styles.appName, { color: theme.colors.primary }]}>
+            ReactDev
+          </Text>
+          <Text style={[styles.copyright, { color: theme.colors.textSecondary }]}>
+            © {currentYear} Todos os direitos reservados
+          </Text>
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.authorContainer}
+          onPress={handleOpenGitHub}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.authorText, { color: theme.colors.textSecondary }]}>
+            Desenvolvido por 
+            <Text style={[styles.authorName, { color: theme.colors.text }]}> Karan Luciano</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+      
+      <View 
+        style={[
+          styles.gradientLine, 
+          { 
+            backgroundColor: theme.colors.primary,
+            shadowColor: theme.colors.primary,
+          }
+        ]} 
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   footer: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderTopWidth: 1,
+  },
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  text: {
+  infoContainer: {
+    flex: 1,
+  },
+  appName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  copyright: {
+    fontSize: 11,
+  },
+  authorContainer: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  authorText: {
     fontSize: 12,
-    fontWeight: '500',
+  },
+  authorName: {
+    fontWeight: '600',
+  },
+  gradientLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 3,
   },
 });
 

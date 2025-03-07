@@ -1,13 +1,170 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView, 
+  Animated, 
+  Pressable,
+  Easing
+} from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { exercises } from '../data/exercisesData';
+
+const AnimatedTouchable = ({ children, onPress, style }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      friction: 8,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 5,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Animated.View style={[style, { transform: [{ scale: scaleAnim }] }]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
+
+const DifficultyButton = ({ title, isSelected, onPress, theme }) => {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.difficultyButton,
+        { 
+          backgroundColor: isSelected ? theme.colors.primary : theme.colors.cardBackground,
+          borderWidth: 1,
+          borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+        }
+      ]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={[
+        styles.difficultyButtonText,
+        { color: isSelected ? '#fff' : theme.colors.textSecondary }
+      ]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+// Componente para renderizar um item de exercício com animação
+const ExerciseItem = ({ exercise, index, onSelectExercise, theme }) => {
+  const slideAnim = useRef(new Animated.Value(50)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        delay: index * 100,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 300,
+        delay: index * 100,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, [index]);
+  
+  return (
+    <Animated.View 
+      style={{
+        transform: [{ translateY: slideAnim }],
+        opacity: opacityAnim
+      }}
+    >
+      <AnimatedTouchable
+        style={[
+          styles.exerciseCard,
+          { 
+            backgroundColor: theme.colors.cardBackground,
+            ...theme.shadows.medium,
+          }
+        ]}
+        onPress={() => onSelectExercise(exercise)}
+      >
+        <View style={styles.exerciseHeader}>
+          <Text style={[styles.exerciseTitle, { color: theme.colors.text }]}>
+            {exercise.title}
+          </Text>
+          <View style={[
+            styles.difficultyBadge,
+            { 
+              backgroundColor: 
+                exercise.difficulty === 'Iniciante' ? '#4CAF50' :
+                exercise.difficulty === 'Intermediário' ? '#FF9800' : '#F44336'
+            }
+          ]}>
+            <Text style={styles.difficultyBadgeText}>{exercise.difficulty}</Text>
+          </View>
+        </View>
+        
+        <Text style={[styles.exerciseDescription, { color: theme.colors.textSecondary }]}>
+          {exercise.description}
+        </Text>
+        
+        <View style={styles.requirementsContainer}>
+          <Text style={[styles.requirementsTitle, { color: theme.colors.text }]}>
+            Requisitos:
+          </Text>
+          {exercise.requirements.map((req, reqIndex) => (
+            <Text 
+              key={reqIndex} 
+              style={[styles.requirementItem, { color: theme.colors.textSecondary }]}
+            >
+              • {req}
+            </Text>
+          ))}
+        </View>
+        
+        <View style={styles.startButtonContainer}>
+          <TouchableOpacity
+            style={[styles.startButton, { backgroundColor: theme.colors.primary }]}
+            onPress={() => onSelectExercise(exercise)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.startButtonText}>Iniciar Exercício</Text>
+          </TouchableOpacity>
+        </View>
+      </AnimatedTouchable>
+    </Animated.View>
+  );
+};
 
 const Exercises = ({ category, onSelectExercise }) => {
   const { theme } = useTheme();
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
-
-  const categoryExercises = exercises[category] || [];
+  const [exercisesData, setExercisesData] = useState([]);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  
+  const categoryExercises = exercisesData[category] || [];
   
   const filteredExercises = selectedDifficulty 
     ? categoryExercises.filter(exercise => exercise.difficulty === selectedDifficulty)
@@ -15,117 +172,75 @@ const Exercises = ({ category, onSelectExercise }) => {
 
   const difficulties = ['Iniciante', 'Intermediário', 'Avançado'];
 
+  useEffect(() => {
+    // Simular carregamento de dados
+    setTimeout(() => {
+      setExercisesData(require('../data/exercisesData').exercises);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    }, 300);
+  }, []);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>
-        Exercícios Práticos - {category === 'react' ? 'React' : 'React Native'}
-      </Text>
-      
-      <View style={styles.filterContainer}>
-        <Text style={[styles.filterLabel, { color: theme.colors.textSecondary }]}>
-          Filtrar por dificuldade:
+      <Animated.View style={[styles.headerContainer, { opacity: fadeAnim }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          Exercícios Práticos - {category === 'react' ? 'React' : 'React Native'}
         </Text>
-        <View style={styles.difficultyButtons}>
-          <TouchableOpacity
-            style={[
-              styles.difficultyButton,
-              { backgroundColor: selectedDifficulty === null ? theme.colors.primary : theme.colors.cardBackground }
-            ]}
-            onPress={() => setSelectedDifficulty(null)}
-          >
-            <Text style={[
-              styles.difficultyButtonText,
-              { color: selectedDifficulty === null ? '#fff' : theme.colors.textSecondary }
-            ]}>
-              Todos
-            </Text>
-          </TouchableOpacity>
-          
-          {difficulties.map(difficulty => (
-            <TouchableOpacity
-              key={difficulty}
-              style={[
-                styles.difficultyButton,
-                { backgroundColor: selectedDifficulty === difficulty ? theme.colors.primary : theme.colors.cardBackground }
-              ]}
-              onPress={() => setSelectedDifficulty(difficulty)}
-            >
-              <Text style={[
-                styles.difficultyButtonText,
-                { color: selectedDifficulty === difficulty ? '#fff' : theme.colors.textSecondary }
-              ]}>
-                {difficulty}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-      
-      <ScrollView style={styles.exercisesList}>
-        {filteredExercises.length > 0 ? (
-          filteredExercises.map(exercise => (
-            <TouchableOpacity
-              key={exercise.id}
-              style={[
-                styles.exerciseCard,
-                { 
-                  backgroundColor: theme.colors.cardBackground,
-                  ...theme.shadows.medium,
-                }
-              ]}
-              onPress={() => onSelectExercise(exercise)}
-            >
-              <View style={styles.exerciseHeader}>
-                <Text style={[styles.exerciseTitle, { color: theme.colors.text }]}>
-                  {exercise.title}
-                </Text>
-                <View style={[
-                  styles.difficultyBadge,
-                  { 
-                    backgroundColor: 
-                      exercise.difficulty === 'Iniciante' ? '#4CAF50' :
-                      exercise.difficulty === 'Intermediário' ? '#FF9800' : '#F44336'
-                  }
-                ]}>
-                  <Text style={styles.difficultyBadgeText}>{exercise.difficulty}</Text>
-                </View>
-              </View>
-              
-              <Text style={[styles.exerciseDescription, { color: theme.colors.textSecondary }]}>
-                {exercise.description}
-              </Text>
-              
-              <View style={styles.requirementsContainer}>
-                <Text style={[styles.requirementsTitle, { color: theme.colors.text }]}>
-                  Requisitos:
-                </Text>
-                {exercise.requirements.map((req, index) => (
-                  <Text 
-                    key={index} 
-                    style={[styles.requirementItem, { color: theme.colors.textSecondary }]}
-                  >
-                    • {req}
-                  </Text>
-                ))}
-              </View>
-              
-              <View style={styles.startButtonContainer}>
-                <TouchableOpacity
-                  style={[styles.startButton, { backgroundColor: theme.colors.primary }]}
-                  onPress={() => onSelectExercise(exercise)}
-                >
-                  <Text style={styles.startButtonText}>Iniciar Exercício</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-              Nenhum exercício encontrado para esta dificuldade.
-            </Text>
+        
+        <View style={styles.filterContainer}>
+          <Text style={[styles.filterLabel, { color: theme.colors.textSecondary }]}>
+            Filtrar por dificuldade:
+          </Text>
+          <View style={styles.difficultyButtons}>
+            <DifficultyButton 
+              title="Todos" 
+              isSelected={selectedDifficulty === null}
+              onPress={() => setSelectedDifficulty(null)}
+              theme={theme}
+            />
+            
+            {difficulties.map(difficulty => (
+              <DifficultyButton
+                key={difficulty}
+                title={difficulty}
+                isSelected={selectedDifficulty === difficulty}
+                onPress={() => setSelectedDifficulty(difficulty)}
+                theme={theme}
+              />
+            ))}
           </View>
-        )}
+        </View>
+      </Animated.View>
+      
+      <ScrollView 
+        style={styles.exercisesList}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.exercisesListContent}
+      >
+        <Animated.View style={{ opacity: fadeAnim }}>
+          {filteredExercises.length > 0 ? (
+            filteredExercises.map((exercise, index) => (
+              <ExerciseItem 
+                key={exercise.id}
+                exercise={exercise}
+                index={index}
+                onSelectExercise={onSelectExercise}
+                theme={theme}
+              />
+            ))
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+                Nenhum exercício encontrado para esta dificuldade.
+              </Text>
+            </View>
+          )}
+        </Animated.View>
       </ScrollView>
     </View>
   );
@@ -134,7 +249,10 @@ const Exercises = ({ category, onSelectExercise }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
     padding: 16,
+    paddingBottom: 0,
   },
   title: {
     fontSize: 24,
@@ -147,7 +265,7 @@ const styles = StyleSheet.create({
   },
   filterLabel: {
     fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   difficultyButtons: {
     flexDirection: 'row',
@@ -165,6 +283,10 @@ const styles = StyleSheet.create({
   },
   exercisesList: {
     flex: 1,
+  },
+  exercisesListContent: {
+    padding: 16,
+    paddingBottom: 40,
   },
   exerciseCard: {
     borderRadius: 12,
@@ -229,6 +351,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 40,
   },
   emptyText: {
     fontSize: 16,

@@ -1,99 +1,223 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  Animated, 
+  Easing,
+  Pressable
+} from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+
+const AnimatedButton = ({ onPress, style, textStyle, children, backgroundColor }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      friction: 8,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 5,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Animated.View 
+        style={[
+          style, 
+          { 
+            transform: [{ scale: scaleAnim }],
+            backgroundColor
+          }
+        ]}
+      >
+        <Text style={textStyle}>{children}</Text>
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const ExerciseContent = ({ exercise, onBack }) => {
   const { theme } = useTheme();
   const [showSolution, setShowSolution] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+  const solutionFadeAnim = useRef(new Animated.Value(0)).current;
+  const solutionSlideAnim = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, []);
+
+  useEffect(() => {
+    if (showSolution) {
+      Animated.parallel([
+        Animated.timing(solutionFadeAnim, {
+          toValue: 1,
+          duration: 400,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(solutionSlideAnim, {
+          toValue: 0,
+          duration: 400,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        })
+      ]).start();
+    } else {
+      solutionFadeAnim.setValue(0);
+      solutionSlideAnim.setValue(30);
+    }
+  }, [showSolution]);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
-          {exercise.title}
-        </Text>
-        <View style={[
-          styles.difficultyBadge,
-          { 
-            backgroundColor: 
-              exercise.difficulty === 'Iniciante' ? '#4CAF50' :
-              exercise.difficulty === 'Intermediário' ? '#FF9800' : '#F44336'
-          }
-        ]}>
-          <Text style={styles.difficultyBadgeText}>{exercise.difficulty}</Text>
-        </View>
-      </View>
-
-      <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
-        {exercise.description}
-      </Text>
-
-      <View style={styles.requirementsContainer}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-          Requisitos:
-        </Text>
-        {exercise.requirements.map((req, index) => (
-          <Text 
-            key={index} 
-            style={[styles.requirementItem, { color: theme.colors.textSecondary }]}
-          >
-            • {req}
+    <ScrollView 
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Animated.View 
+        style={{ 
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }]
+        }}
+      >
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            {exercise.title}
           </Text>
-        ))}
-      </View>
-
-      <View style={styles.codeContainer}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-          Código Inicial:
-        </Text>
-        <View style={[styles.codeBlock, { backgroundColor: theme.colors.codeBackground }]}>
-          <ScrollView horizontal>
-            <Text style={[styles.code, { color: theme.colors.codeText }]}>
-              {exercise.initialCode}
-            </Text>
-          </ScrollView>
-        </View>
-      </View>
-
-      <View style={styles.solutionContainer}>
-        <TouchableOpacity
-          style={[
-            styles.solutionButton,
-            { backgroundColor: theme.colors.primary }
-          ]}
-          onPress={() => setShowSolution(!showSolution)}
-        >
-          <Text style={styles.solutionButtonText}>
-            {showSolution ? 'Ocultar Solução' : 'Ver Solução'}
-          </Text>
-        </TouchableOpacity>
-
-        {showSolution && (
-          <View style={styles.solutionContent}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-              Solução:
-            </Text>
-            <View style={[styles.codeBlock, { backgroundColor: theme.colors.codeBackground }]}>
-              <ScrollView horizontal>
-                <Text style={[styles.code, { color: theme.colors.codeText }]}>
-                  {exercise.solution}
-                </Text>
-              </ScrollView>
-            </View>
+          <View style={[
+            styles.difficultyBadge,
+            { 
+              backgroundColor: 
+                exercise.difficulty === 'Iniciante' ? '#4CAF50' :
+                exercise.difficulty === 'Intermediário' ? '#FF9800' : '#F44336'
+            }
+          ]}>
+            <Text style={styles.difficultyBadgeText}>{exercise.difficulty}</Text>
           </View>
-        )}
-      </View>
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: theme.colors.cardBackground }]}
-          onPress={onBack}
-        >
-          <Text style={[styles.backButtonText, { color: theme.colors.primary }]}>
-            Voltar para Exercícios
+        <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
+          {exercise.description}
+        </Text>
+
+        <View style={styles.requirementsContainer}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            Requisitos:
           </Text>
-        </TouchableOpacity>
-      </View>
+          {exercise.requirements.map((req, index) => (
+            <Text 
+              key={index} 
+              style={[styles.requirementItem, { color: theme.colors.textSecondary }]}
+            >
+              • {req}
+            </Text>
+          ))}
+        </View>
+
+        <View style={styles.codeContainer}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            Código Inicial:
+          </Text>
+          <View style={[
+            styles.codeBlock, 
+            { 
+              backgroundColor: theme.colors.codeBackground,
+              borderColor: theme.colors.border,
+            }
+          ]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <Text style={[styles.code, { color: theme.colors.codeText }]}>
+                {exercise.initialCode}
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
+
+        <View style={styles.solutionContainer}>
+          <AnimatedButton
+            style={styles.solutionButton}
+            textStyle={styles.solutionButtonText}
+            onPress={() => setShowSolution(!showSolution)}
+            backgroundColor={theme.colors.primary}
+          >
+            {showSolution ? 'Ocultar Solução' : 'Ver Solução'}
+          </AnimatedButton>
+
+          {showSolution && (
+            <Animated.View 
+              style={[
+                styles.solutionContent,
+                {
+                  opacity: solutionFadeAnim,
+                  transform: [{ translateY: solutionSlideAnim }]
+                }
+              ]}
+            >
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                Solução:
+              </Text>
+              <View style={[
+                styles.codeBlock, 
+                { 
+                  backgroundColor: theme.colors.codeBackground,
+                  borderColor: theme.colors.border,
+                }
+              ]}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <Text style={[styles.code, { color: theme.colors.codeText }]}>
+                    {exercise.solution}
+                  </Text>
+                </ScrollView>
+              </View>
+            </Animated.View>
+          )}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <AnimatedButton
+            style={[
+              styles.backButton, 
+              { borderColor: theme.colors.primary }
+            ]}
+            textStyle={[styles.backButtonText, { color: theme.colors.primary }]}
+            onPress={onBack}
+            backgroundColor={theme.colors.cardBackground}
+          >
+            Voltar para Exercícios
+          </AnimatedButton>
+        </View>
+      </Animated.View>
     </ScrollView>
   );
 };
@@ -149,6 +273,7 @@ const styles = StyleSheet.create({
   codeBlock: {
     padding: 16,
     borderRadius: 8,
+    borderWidth: 1,
   },
   code: {
     fontFamily: 'monospace',
@@ -182,7 +307,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: 'transparent',
   },
   backButtonText: {
     fontWeight: 'bold',

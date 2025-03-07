@@ -1,7 +1,41 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Pressable } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import HomeHeader from './HomeHeader';
+
+const AnimatedTouchable = ({ children, onPress, style }) => {
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      friction: 8,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 5,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+    >
+      <Animated.View style={[style, { transform: [{ scale: scaleAnim }] }]}>
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const Home = ({ onSelectCategory, onSelectExercises }) => {
   const { theme } = useTheme();
@@ -26,7 +60,7 @@ const Home = ({ onSelectCategory, onSelectExercises }) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HomeHeader />
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
             Escolha uma categoria para começar
@@ -34,7 +68,7 @@ const Home = ({ onSelectCategory, onSelectExercises }) => {
 
           <View style={styles.categoriesContainer}>
             {categories.map((category) => (
-              <TouchableOpacity
+              <AnimatedTouchable
                 key={category.id}
                 style={[
                   styles.categoryCard,
@@ -59,7 +93,7 @@ const Home = ({ onSelectCategory, onSelectExercises }) => {
                 <View style={[styles.arrowContainer, { backgroundColor: theme.colors.primaryLight }]}>
                   <Text style={[styles.arrow, { color: theme.colors.primary }]}>→</Text>
                 </View>
-              </TouchableOpacity>
+              </AnimatedTouchable>
             ))}
           </View>
 
@@ -72,7 +106,7 @@ const Home = ({ onSelectCategory, onSelectExercises }) => {
 
           <View style={styles.exercisesContainer}>
             {categories.map((category) => (
-              <TouchableOpacity
+              <AnimatedTouchable
                 key={`exercise-${category.id}`}
                 style={[
                   styles.exerciseCard,
@@ -97,7 +131,7 @@ const Home = ({ onSelectCategory, onSelectExercises }) => {
                 <View style={[styles.exerciseArrowContainer, { backgroundColor: theme.colors.primaryLight }]}>
                   <Text style={[styles.exerciseArrow, { color: theme.colors.primary }]}>→</Text>
                 </View>
-              </TouchableOpacity>
+              </AnimatedTouchable>
             ))}
           </View>
         </View>
@@ -115,6 +149,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 24,
+    paddingBottom: 40,
   },
   subtitle: {
     fontSize: 16,

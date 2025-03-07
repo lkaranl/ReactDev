@@ -1,6 +1,53 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar, Animated, Pressable } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+
+const AnimatedButton = ({ children, onPress, style, disabled = false }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  
+  const handlePressIn = () => {
+    if (!disabled) {
+      Animated.spring(scaleAnim, {
+        toValue: 0.9,
+        friction: 7,
+        tension: 100,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+  
+  const handlePressOut = () => {
+    if (!disabled) {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 5,
+        tension: 40,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+  
+  return (
+    <Pressable
+      onPress={disabled ? null : onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={disabled}
+    >
+      <Animated.View 
+        style={[
+          style, 
+          { 
+            transform: [{ scale: scaleAnim }],
+            opacity: disabled ? 0.5 : 1
+          }
+        ]}
+      >
+        {children}
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const Header = ({ onBack }) => {
   const { theme, isDarkMode, toggleTheme } = useTheme();
@@ -16,26 +63,26 @@ const Header = ({ onBack }) => {
     ]}>
       <View style={styles.statusBar} />
       <View style={styles.topBar}>
-        <TouchableOpacity 
+        <AnimatedButton 
           style={[styles.backButton, { backgroundColor: theme.colors.primaryLight }]} 
           onPress={onBack}
           disabled={!onBack}
         >
-          <Text style={[styles.backText, !onBack && styles.disabled, { color: theme.colors.primary }]}>
+          <Text style={[styles.backText, { color: theme.colors.primary }]}>
             ←
           </Text>
-        </TouchableOpacity>
+        </AnimatedButton>
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: theme.colors.text }]}>React Learning</Text>
         </View>
-        <TouchableOpacity 
+        <AnimatedButton 
           style={[styles.themeButton, { backgroundColor: theme.colors.primaryLight }]}
           onPress={toggleTheme}
         >
           <Text style={[styles.themeButtonText, { color: theme.colors.primary }]}>
             {isDarkMode ? '☀️' : '🌙'}
           </Text>
-        </TouchableOpacity>
+        </AnimatedButton>
       </View>
     </View>
   );
@@ -77,9 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 2, // Ajuste fino para centralizar visualmente
-  },
-  disabled: {
-    opacity: 0.5,
   },
   titleContainer: {
     flex: 1,

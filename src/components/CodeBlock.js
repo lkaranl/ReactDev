@@ -2,14 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, AccessibilityInfo } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import SyntaxHighlighter from 'react-native-syntax-highlighter';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { vs, darcula } from 'react-syntax-highlighter/styles/prism';
+import * as Clipboard from 'expo-clipboard';
 
 const CodeBlock = ({ 
   code = '', 
   language = 'javascript',
   documentationUrl = null 
 }) => {
-  const { theme } = useTheme();
+  const { theme, isDarkMode } = useTheme();
 
   const handleOpenDocs = () => {
     if (documentationUrl) {
@@ -18,9 +19,13 @@ const CodeBlock = ({
     }
   };
 
-  const handleCopyCode = () => {
+  const handleCopyCode = async () => {
+    await Clipboard.setStringAsync(code);
     AccessibilityInfo.announceForAccessibility('Código copiado para a área de transferência');
   };
+
+  // Escolha o estilo baseado no tema
+  const syntaxStyle = isDarkMode ? darcula : vs;
 
   return (
     <View 
@@ -29,9 +34,16 @@ const CodeBlock = ({
       accessibilityLabel={`Exemplo de código em ${language}`}
       accessibilityHint="Este é um bloco de código com syntax highlighting"
     >
-      <View style={[styles.codeContainer, { backgroundColor: theme.isDark ? '#282A36' : '#FFFFFF' }]}>
+      <View style={[
+        styles.codeContainer, 
+        { 
+          backgroundColor: theme.colors.codeBackground,
+          borderColor: theme.colors.border 
+        }
+      ]}>
         <SyntaxHighlighter
           language={language}
+          style={syntaxStyle}
           fontSize={13}
           highlighter="prism"
           customStyle={{
@@ -52,7 +64,6 @@ const CodeBlock = ({
           accessibilityLabel="Copiar código"
           accessibilityHint="Toque para copiar o código para a área de transferência"
         >
-          <Icon name="content-copy" size={16} color={theme.colors.primary} />
           <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
             Copiar
           </Text>
@@ -65,7 +76,6 @@ const CodeBlock = ({
             accessibilityLabel="Ver documentação"
             accessibilityHint="Toque para abrir a documentação externa"
           >
-            <Icon name="menu-book" size={16} color={theme.colors.primary} />
             <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>
               Ver documentação
             </Text>
@@ -84,7 +94,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
     overflow: 'hidden',
   },
   actions: {
@@ -99,7 +108,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   actionButtonText: {
-    marginLeft: 8,
     fontSize: 13,
     fontWeight: '500',
   },
