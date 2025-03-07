@@ -19,61 +19,7 @@ const CodeBlock = ({
   };
 
   const handleCopyCode = () => {
-    // Implementar funcionalidade de copiar código
     AccessibilityInfo.announceForAccessibility('Código copiado para a área de transferência');
-  };
-
-  const customStyle = {
-    backgroundColor: 'transparent',
-    padding: 0,
-    margin: 0,
-    fontFamily: 'monospace',
-    fontSize: 13,
-  };
-
-  const customHighlighter = {
-    'pre[class*="language-"]': {
-      backgroundColor: 'transparent',
-      padding: 0,
-      margin: 0,
-    },
-    'code[class*="language-"]': {
-      backgroundColor: 'transparent',
-      padding: 0,
-      margin: 0,
-      fontFamily: 'monospace',
-      fontSize: 13,
-    },
-    comment: {
-      color: theme.isDark ? '#6A9955' : '#008000',
-    },
-    string: {
-      color: theme.isDark ? '#FFA07A' : '#A31515',
-    },
-    keyword: {
-      color: theme.isDark ? '#4FC3F7' : '#0000FF',
-    },
-    number: {
-      color: theme.isDark ? '#81C784' : '#098658',
-    },
-    function: {
-      color: theme.isDark ? '#FFD54F' : '#795E26',
-    },
-    operator: {
-      color: theme.isDark ? '#4FC3F7' : '#0000FF',
-    },
-    punctuation: {
-      color: theme.isDark ? '#4FC3F7' : '#0000FF',
-    },
-    'jsx-tag': {
-      color: theme.isDark ? '#4FC3F7' : '#0000FF',
-    },
-    'jsx-attr': {
-      color: theme.isDark ? '#B3E5FC' : '#001080',
-    },
-    'jsx-string': {
-      color: theme.isDark ? '#FFA07A' : '#A31515',
-    },
   };
 
   return (
@@ -83,13 +29,17 @@ const CodeBlock = ({
       accessibilityLabel={`Exemplo de código em ${language}`}
       accessibilityHint="Este é um bloco de código com syntax highlighting"
     >
-      <View style={[styles.codeContainer, { backgroundColor: theme.colors.codeBackground }]}>
+      <View style={[styles.codeContainer, { backgroundColor: theme.isDark ? '#282A36' : '#FFFFFF' }]}>
         <SyntaxHighlighter
           language={language}
           fontSize={13}
           highlighter="prism"
-          customStyle={customStyle}
-          customHighlighter={customHighlighter}
+          customStyle={{
+            backgroundColor: 'transparent',
+            padding: 0,
+            margin: 0,
+            fontFamily: 'monospace',
+          }}
         >
           {code}
         </SyntaxHighlighter>
