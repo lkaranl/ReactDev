@@ -4,7 +4,11 @@ import { useTheme } from '../context/ThemeContext';
 import SyntaxHighlighter from 'react-native-syntax-highlighter';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const CodeBlock = ({ code, language, documentationUrl }) => {
+const CodeBlock = ({ 
+  code = '', 
+  language = 'javascript',
+  documentationUrl = null 
+}) => {
   const { theme } = useTheme();
 
   const handleOpenDocs = () => {
@@ -19,24 +23,73 @@ const CodeBlock = ({ code, language, documentationUrl }) => {
     AccessibilityInfo.announceForAccessibility('Código copiado para a área de transferência');
   };
 
+  const customStyle = {
+    backgroundColor: 'transparent',
+    padding: 0,
+    margin: 0,
+    fontFamily: 'monospace',
+    fontSize: 13,
+  };
+
+  const customHighlighter = {
+    'pre[class*="language-"]': {
+      backgroundColor: 'transparent',
+      padding: 0,
+      margin: 0,
+    },
+    'code[class*="language-"]': {
+      backgroundColor: 'transparent',
+      padding: 0,
+      margin: 0,
+      fontFamily: 'monospace',
+      fontSize: 13,
+    },
+    comment: {
+      color: theme.isDark ? '#6A9955' : '#008000',
+    },
+    string: {
+      color: theme.isDark ? '#FFA07A' : '#A31515',
+    },
+    keyword: {
+      color: theme.isDark ? '#4FC3F7' : '#0000FF',
+    },
+    number: {
+      color: theme.isDark ? '#81C784' : '#098658',
+    },
+    function: {
+      color: theme.isDark ? '#FFD54F' : '#795E26',
+    },
+    operator: {
+      color: theme.isDark ? '#4FC3F7' : '#0000FF',
+    },
+    punctuation: {
+      color: theme.isDark ? '#4FC3F7' : '#0000FF',
+    },
+    'jsx-tag': {
+      color: theme.isDark ? '#4FC3F7' : '#0000FF',
+    },
+    'jsx-attr': {
+      color: theme.isDark ? '#B3E5FC' : '#001080',
+    },
+    'jsx-string': {
+      color: theme.isDark ? '#FFA07A' : '#A31515',
+    },
+  };
+
   return (
     <View 
       style={styles.container}
       accessible={true}
-      accessibilityLabel={`Exemplo de código em ${language || 'JavaScript'}`}
+      accessibilityLabel={`Exemplo de código em ${language}`}
       accessibilityHint="Este é um bloco de código com syntax highlighting"
     >
       <View style={[styles.codeContainer, { backgroundColor: theme.colors.codeBackground }]}>
         <SyntaxHighlighter
-          language={language || 'javascript'}
+          language={language}
           fontSize={13}
           highlighter="prism"
-          customStyle={{
-            backgroundColor: 'transparent',
-            padding: 0,
-            margin: 0,
-            fontFamily: 'monospace',
-          }}
+          customStyle={customStyle}
+          customHighlighter={customHighlighter}
         >
           {code}
         </SyntaxHighlighter>
