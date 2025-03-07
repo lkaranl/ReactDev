@@ -94,24 +94,31 @@ const Menu = ({ isVisible, onClose, onSelectOption }) => {
                     { borderBottomColor: theme.colors.border }
                   ]}
                 >
-                  <Text style={[styles.menuText, { color: theme.colors.text }]}>
-                    {item.title}
-                  </Text>
                   {item.type === 'switch' ? (
-                    <Switch
-                      value={item.value}
-                      onValueChange={item.onValueChange}
-                      trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-                      thumbColor={theme.colors.cardBackground}
-                    />
+                    <>
+                      <Text style={[styles.menuText, { color: theme.colors.text }]}>
+                        {item.title}
+                      </Text>
+                      <Switch
+                        value={item.value}
+                        onValueChange={item.onValueChange}
+                        trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                        thumbColor={theme.colors.cardBackground}
+                      />
+                    </>
                   ) : (
                     <TouchableOpacity
-                      style={styles.menuButton}
+                      style={styles.menuButtonContainer}
                       onPress={item.onPress}
                     >
-                      <Text style={[styles.menuButtonText, { color: theme.colors.primary }]}>
-                        →
+                      <Text style={[styles.menuText, { color: theme.colors.text }]}>
+                        {item.title}
                       </Text>
+                      <View style={styles.menuButton}>
+                        <Text style={[styles.menuButtonText, { color: theme.colors.primary }]}>
+                          →
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -157,6 +164,12 @@ const styles = StyleSheet.create({
   menuButtonText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  menuButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 
